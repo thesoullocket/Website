@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelogue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Special Elite', serif;
+        }
+
+        .scene-bg {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: url('https://png.pngtree.com/background/20250522/original/pngtree-a-vintage-postcard-with-an-open-book-surrounded-by-various-old-picture-image_16516159.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.4) contrast(1.1);
+            z-index: 1;
+        }
+
+        .header-container {
+            position: absolute;
+            top: 4vh;
+            z-index: 100;
+            text-align: center;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #f4f1ea;
+            text-shadow: 2px 4px 15px rgba(0,0,0,0.9);
+        }
+
+        .hint {
+            color: #d4af37;
+            font-size: 0.8rem;
+            letter-spacing: 5px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        /* --- THE CAMERA --- */
+        .camera-anchor {
+            position: relative;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        .camera-img {
+            width: 380px; /* Adjusted for better fit */
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,1));
+            user-select: none;
+        }
+
+        @keyframes vibrate {
+            0% { transform: translate(0,0) rotate(0deg); }
+            20% { transform: translate(-2px, 1px) rotate(0.5deg); }
+            40% { transform: translate(2px, -1px) rotate(-0.5deg); }
+            60% { transform: translate(-2px, -1px) rotate(0.5deg); }
+            80% { transform: translate(2px, 1px) rotate(-0.5deg); }
+            100% { transform: translate(0,0) rotate(0deg); }
+        }
+        .vibrating { animation: vibrate 0.08s linear infinite; }
+
+        /* --- POLAROIDS (Safe Scaling) --- */
+        .polaroid {
+            position: absolute;
+            width: 190px; /* Scaled down slightly */
+            background: #fff;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 5px 15px 30px rgba(0,0,0,0.7);
+            opacity: 0;
+            z-index: 50;
+            transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: brightness(0) blur(8px);
+            transition: filter 5s ease-in-out;
+        }
+
+        .polaroid.developed img {
+            filter: brightness(1) sepia(0.1) contrast(1.1) blur(0);
+        }
+
+        .polaroid::after {
+            content: "♥";
+            position: absolute;
+            bottom: 8px; left: 0; width: 100%;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            color: rgba(0,0,0,0.2);
+            font-size: 1.5rem;
+        }
+
+        #flash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; opacity: 0; z-index: 1000; pointer-events: none;
+        }
+
+        .final-note {
+            position: absolute;
+            bottom: 5vh;
+            color: #f4f1ea;
+            font-size: 1.4rem;
+            text-align: center;
+            opacity: 0;
+            transition: 2s;
+            z-index: 200;
+            background: rgba(0,0,0,0.7);
+            padding: 12px 35px;
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
+            border: 1px solid #d4af37;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene-bg"></div>
+    <div id="flash"></div>
+
+    <div class="header-container">
+        <h1>Our Travelogue</h1>
+        <div class="hint">Click the Camera</div>
+    </div>
+
+    <div class="camera-anchor" id="cam" onclick="capture()">
+        <img src="https://static.vecteezy.com/system/resources/previews/048/415/684/large_2x/brown-camera-over-transparent-background-free-png.png" class="camera-img">
+    </div>
+
+    <div id="p1" class="polaroid"><img src="https://i.pinimg.com/736x/a1/15/8f/a1158fa44b428df024e33bc2f88c9f44.jpg"></div>
+    <div id="p2" class="polaroid"><img src="https://i.pinimg.com/474x/62/f0/18/62f0182225255e07d08c690e90f4bd82.jpg"></div>
+    <div id="p3" class="polaroid"><img src="http://i.pinimg.com/736x/8a/71/a4/8a71a4c1aa04292ab7b45e8b7f8e220d.jpg"></div>
+    <div id="p4" class="polaroid"><img src="https://i.pinimg.com/474x/8c/6c/28/8c6c28acabc986963c114f2d4d8c7c44.jpg"></div>
+    <div id="p5" class="polaroid"><img src="https://i.pinimg.com/474x/2f/2b/86/2f2b8603eb6bd04abfc8ee4fb89bc326.jpg"></div>
+    <div id="p6" class="polaroid"><img src="https://i.pinimg.com/474x/03/9d/ee/039dee7bbc8c8e77de68376c8a99299d.jpg"></div>
+
+    <div class="final-note" id="note">To many more adventures and miles together.</div>
+
+    <audio id="shutter" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1440/1440-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let photoNum = 1;
+        
+        // Relative positions to keep images on-screen (vw = viewport width, vh = viewport height)
+        const positions = [
+            { x: -35, y: -25, r: -10 }, // Left Top
+            { x: -40, y: 0, r: -5 },    // Left Middle
+            { x: -35, y: 25, r: 8 },    // Left Bottom
+            { x: 35, y: -25, r: 10 },   // Right Top
+            { x: 40, y: 0, r: 5 },     // Right Middle
+            { x: 35, y: 25, r: -8 }     // Right Bottom
+        ];
+
+        function capture() {
+            if (photoNum > 6) return;
+
+            const s = document.getElementById('shutter');
+            s.pause();
+            s.currentTime = 0;
+            s.play();
+
+            const f = document.getElementById('flash');
+            f.style.transition = 'none';
+            f.style.opacity = '0.9';
+            setTimeout(() => { 
+                f.style.transition = 'opacity 0.6s'; 
+                f.style.opacity = '0'; 
+            }, 50);
+
+            const c = document.getElementById('cam');
+            c.classList.add('vibrating');
+            setTimeout(() => c.classList.remove('vibrating'), 700);
+
+            const p = document.getElementById(`p${photoNum}`);
+            const pos = positions[photoNum - 1];
+
+            p.style.opacity = '1';
+            p.style.zIndex = 50 + photoNum;
+            
+            setTimeout(() => {
+                // Using vw/vh units in JS to ensure responsive placement
+                p.style.transform = `translate(${pos.x}vw, ${pos.y}vh) rotate(${pos.r}deg)`;
+                setTimeout(() => p.classList.add('developed'), 400);
+            }, 50);
+
+            if (photoNum === 6) {
+                setTimeout(() => {
+                    document.getElementById('note').style.opacity = '1';
+                    confetti({ particleCount: 120, spread: 70, origin: { y: 0.8 }, colors: ['#d4af37', '#ffffff'] });
+                }, 2500);
+            }
+            photoNum++;
+        }
+    </script>
+</body>
+</html>
