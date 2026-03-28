@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Keepsake - Camera</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Special+Elite&family=Dancing+Script:wght@700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Special Elite', serif;
+        }
+
+        .scene-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://png.pngtree.com/background/20250522/original/pngtree-a-vintage-postcard-with-an-open-book-surrounded-by-various-old-picture-image_16516159.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.3) contrast(1.2);
+            z-index: 1;
+        }
+
+        .header-container {
+            position: absolute;
+            top: 6vh;
+            z-index: 100;
+            text-align: center;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards 0.5s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.8rem;
+            color: #f4f1ea;
+            text-shadow: 2px 4px 15px rgba(0, 0, 0, 0.9);
+        }
+
+        .hint {
+            color: #d4af37;
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            margin-top: 8px;
+            text-transform: uppercase;
+            animation: pulseText 2s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+            }
+        }
+
+        /* --- THE CAMERA --- */
+        .camera-anchor {
+            position: relative;
+            z-index: 150;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .camera-anchor:hover {
+            transform: scale(1.02);
+        }
+
+        .camera-img {
+            width: 300px;
+            filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.9));
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        @keyframes vibrate {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            20% {
+                transform: translate(-3px, 2px) rotate(1deg);
+            }
+
+            40% {
+                transform: translate(3px, -2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, -2px) rotate(1deg);
+            }
+
+            80% {
+                transform: translate(3px, 2px) rotate(-1deg);
+            }
+
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+        }
+
+        .vibrating {
+            animation: vibrate 0.1s linear infinite;
+        }
+
+        /* --- POLAROIDS --- */
+        .polaroids-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            /* Let clicks hit camera */
+        }
+
+        .polaroid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -115px;
+            margin-left: -95px;
+            width: 190px;
+            background: #fcfbf8;
+            padding: 12px 12px 50px 12px;
+            box-shadow: 5px 15px 40px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            z-index: 50;
+
+            --tx: 0vw;
+            --ty: 0vh;
+            --tr: 0deg;
+            transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(1);
+
+            transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none;
+            border-radius: 2px;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: brightness(0.2) sepia(1) blur(10px);
+            transition: filter 4s ease-in-out;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .polaroid.developed img {
+            filter: brightness(1) sepia(0.0) contrast(1.05) blur(0);
+        }
+
+        .polaroid.developed {
+            pointer-events: auto;
+            /* Allow hovering after it arrives */
+            cursor: grab;
+        }
+
+        .polaroid.developed:hover {
+            transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(1.15) !important;
+            z-index: 999 !important;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .polaroid-caption {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: 'Caveat', cursive;
+            color: #333;
+            font-size: 1.4rem;
+            opacity: 0;
+            transition: opacity 2s ease-in-out 2s;
+            /* Fades in after development */
+        }
+
+        .polaroid.developed .polaroid-caption {
+            opacity: 1;
+        }
+
+        #flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: 0;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .final-note {
+            position: absolute;
+            bottom: 6vh;
+            color: #f4f1ea;
+            font-size: 1.4rem;
+            text-align: center;
+            opacity: 0;
+            transition: 2s;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px 40px;
+            backdrop-filter: blur(8px);
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            font-family: 'Dancing Script', cursive;
+            letter-spacing: 2px;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 768px) {
+            .camera-img {
+                width: 200px;
+            }
+
+            .polaroid {
+                width: 140px;
+                margin-left: -70px;
+                margin-top: -95px;
+                padding: 8px 8px 40px 8px;
+            }
+
+            .polaroid img {
+                height: 130px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+                top: 4vh;
+            }
+
+            .final-note {
+                font-size: 1.1rem;
+                width: 90%;
+                padding: 12px;
+            }
+
+            .polaroid-caption {
+                font-size: 1.1rem;
+                bottom: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="scene-bg"></div>
+    <div id="flash"></div>
+
+    <div class="header-container">
+        <h1 id="main-title">Loading...</h1>
+        <div class="hint" id="main-hint">Loading...</div>
+    </div>
+
+    <div class="polaroids-container" id="polaroids-container">
+        <!-- Rendered via JS -->
+    </div>
+
+    <div class="camera-anchor" id="cam" onclick="capture()">
+        <img src="https://static.vecteezy.com/system/resources/previews/048/415/684/large_2x/brown-camera-over-transparent-background-free-png.png"
+            class="camera-img">
+    </div>
+
+    <div class="final-note" id="note"></div>
+
+    <audio id="shutter" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1440/1440-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // ==========================================
+        //  🎁 EDIT YOUR GIFT CONFIGURATION HERE 🎁
+        // ==========================================
+        const GIFT_CONFIG = {
+            title: "Our Memories...",
+            hintText: "Click the Camera",
+            finalNote: "To a lifetime of memories.",
+            photos: [
+                { url: "https://alanis-k.com/wp-content/uploads/sites/50357/2024/10/240707_Asia-Andrea_013.jpg", caption: "Rome 2023" },
+                { url: "https://previews.123rf.com/images/epokrovsky/epokrovsky1906/epokrovsky190600135/124575382-happy-romantic-couple-in-paris-near-the-eiffel-tower-tourists-spending-their-vacation-in-france.jpg", caption: "Paris Vibes" },
+                { url: "https://thumbs.dreamstime.com/b/hikers-grand-canyon-hiking-couple-looking-view-hiker-men-women-enjoying-view-nature-landscape-wearing-backpacks-young-44580333.jpg", caption: "The Grand Hike" },
+                { url: "https://www.guadaluperoastery.com/cdn/shop/articles/photo-1581834414900-ade2b29ef1c0_1080x.jpg", caption: "Coffee Dates" },
+                { url: "https://i.pinimg.com/236x/22/cd/2d/22cd2d4628f4eafd2424a70f6e8d01ac.jpg", caption: "Lake House" },
+                { url: "https://i.pinimg.com/736x/5e/fd/c8/5efdc8cbef09287b2866952f3f92f360.jpg", caption: "Sunset Drives" }
+            ]
+        };
+        // ==========================================
+
+        let photoNum = 0;
+        const totalPhotos = GIFT_CONFIG.photos.length;
+        const polaroidsContainer = document.getElementById('polaroids-container');
+
+        // Initialize UI
+        document.getElementById('main-title').innerText = GIFT_CONFIG.title;
+        document.getElementById('main-hint').innerText = GIFT_CONFIG.hintText;
+        document.getElementById('note').innerText = GIFT_CONFIG.finalNote;
+
+        // Generate Polaroids in DOM
+        GIFT_CONFIG.photos.forEach((photo, index) => {
+            const div = document.createElement('div');
+            div.className = 'polaroid';
+            div.id = `p${index + 1}`;
+            div.innerHTML = `
+                <img src="${photo.url}" alt="Memory">
+                <div class="polaroid-caption">${photo.caption}</div>
+            `;
+            // Keep original transform in a dataset to restore after hover
+            polaroidsContainer.appendChild(div);
+        });
+
+        // Dynamic coordinate generation for scattered layout
+        function getCoordinates() {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                // Tighter clustered vertical stack for mobile
+                return [
+                    { x: -18, y: -26, r: -12 }, // Top Left
+                    { x: 18, y: -20, r: 10 },  // Top Right
+                    { x: -22, y: -2, r: -6 },  // Mid Left
+                    { x: 22, y: 8, r: 8 },   // Mid Right
+                    { x: -15, y: 26, r: -15 }, // Bottom Left
+                    { x: 16, y: 32, r: -5 }   // Bottom Right
+                ];
+            } else {
+                // Aesthetically pleasing semi-circle spread for Desktop
+                return [
+                    { x: -25, y: -20, r: -15 }, // Top Left
+                    { x: 25, y: -22, r: 10 },  // Top Right
+                    { x: -32, y: 2, r: -5 },  // Mid Left
+                    { x: 32, y: -2, r: 8 },   // Mid Right
+                    { x: -22, y: 25, r: 12 },  // Bottom Left
+                    { x: 26, y: 22, r: -8 }   // Bottom Right
+                ];
+            }
+        }
+
+        let positions = getCoordinates();
+
+        // Update positions on resize to catch orientation changes
+        window.addEventListener('resize', () => {
+            positions = getCoordinates();
+        });
+
+        function capture() {
+            if (photoNum >= totalPhotos) return;
+            photoNum++;
+
+            // Play Shutter Sound
+            const s = document.getElementById('shutter');
+            s.pause();
+            s.currentTime = 0;
+            s.volume = 0.6;
+            s.play();
+
+            // Screen Flash
+            const f = document.getElementById('flash');
+            f.style.transition = 'none';
+            f.style.opacity = '1';
+            setTimeout(() => {
+                f.style.transition = 'opacity 0.7s ease-out';
+                f.style.opacity = '0';
+            }, 60);
+
+            // Camera Vibration
+            const c = document.getElementById('cam');
+            c.classList.add('vibrating');
+            setTimeout(() => c.classList.remove('vibrating'), 400);
+
+            // Eject Polaroid
+            const p = document.getElementById(`p${photoNum}`);
+            const pos = positions[photoNum - 1] || { x: (Math.random() * 40) - 20, y: (Math.random() * 40) - 20, r: (Math.random() * 20) - 10 };
+
+            p.style.opacity = '1';
+            p.style.zIndex = 50 + photoNum;
+
+            setTimeout(() => {
+                p.style.setProperty('--tx', `${pos.x}vw`);
+                p.style.setProperty('--ty', `${pos.y}vh`);
+                p.style.setProperty('--tr', `${pos.r}deg`);
+                // Develop the photo (colors + caption)
+                setTimeout(() => p.classList.add('developed'), 800);
+            }, 50);
+
+            // End Sequence
+            if (photoNum === totalPhotos) {
+                // Hide the hint text
+                setTimeout(() => { document.getElementById('main-hint').style.opacity = '0'; }, 1000);
+
+                // Show final note & confetti
+                setTimeout(() => {
+                    document.getElementById('note').style.opacity = '1';
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.8 }, colors: ['#d4af37', '#ffffff', '#ff9a9e'] });
+                }, 4000);
+            }
+        }
+    </script>
+</body>
+
+</html>
