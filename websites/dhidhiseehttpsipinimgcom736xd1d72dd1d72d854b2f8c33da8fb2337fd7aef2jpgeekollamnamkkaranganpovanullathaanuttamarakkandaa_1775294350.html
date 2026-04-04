@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Birthday Wish - Dhidhisee💗, https://i.pinimg.com/736x/d1/d7/2d/d1d72d854b2f8c33da8fb2337fd7aef2.jpg, Ee kollam, namk karangan povan ullathaanu tta, Marakkandaa! 🎂✨</title>
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --accent: #ffda00;
+            --soft-red: #ff6b81;
+            --candle-gold: #d4af37;
+            --bg-dark: #020202;
+        }
+
+        * { margin:0; padding:0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overscroll-behavior: none;
+            touch-action: none;
+            position: fixed;
+        }
+
+        /* --- IMMERSIVE THEATRICAL BACKGROUND --- */
+        .ambient-layer {
+            position: fixed; inset: 0;
+            background: url('https://images.unsplash.com/photo-1513151233558-d860c5398176?w=1200&q=80'); 
+            background-size: cover;
+            background-position: center;
+            filter: blur(60px) brightness(0.08);
+            opacity: 0;
+            z-index: 1;
+            animation: ambientFade 3s forwards;
+        }
+
+        @keyframes ambientFade { to { opacity: 0.9; } }
+
+        /* Floating Golden Motes & Silhouettes */
+        .decoration-wrap {
+            position: fixed; inset: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .mote {
+            position: absolute;
+            background: radial-gradient(circle, #ffda00 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.3;
+            filter: blur(1px);
+        }
+
+        /* --- THE MASTER CANDLE (DECORATED) --- */
+        .ceremony-wrap {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: introSlide 2s 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+        }
+
+        @keyframes introSlide { 
+            to { opacity: 1; transform: translateY(0) scale(clamp(0.8, 20vw, 1)); }
+        }
+
+        /* Polished Marble/Glass Table Surface */
+        .standing-surface {
+            position: absolute;
+            bottom: -35px;
+            width: 450px; height: 120px;
+            background: radial-gradient(ellipse at center, rgba(255, 218, 0, 0.08) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 80%);
+            border-radius: 50%;
+            filter: blur(20px);
+            z-index: 5;
+            animation: glowPulse 4s infinite alternate;
+        }
+
+        /* The Decorated Candle */
+        .luxury-candle {
+            width: 60px; height: 200px;
+            background: linear-gradient(90deg, #993b48 0%, #ff6b81 45%, #ff8c9f 50%, #ff6b81 55%, #993b48 100%);
+            border-radius: 10px 10px 4px 4px;
+            position: relative;
+            box-shadow: 
+                inset 10px 0 20px rgba(0,0,0,0.1),
+                inset -10px 0 20px rgba(0,0,0,0.1),
+                0 25px 80px rgba(0,0,0,0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Gold Ribbon Decoration */
+        .gold-ribbon {
+            position: absolute;
+            top: 60%; left: -2px; right: -2px;
+            height: 12px;
+            background: linear-gradient(to right, #8a6d3b 0%, #d4af37 20%, #f7e1ad 50%, #d4af37 80%, #8a6d3b 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-radius: 2px;
+            z-index: 6;
+        }
+
+        .wick-root {
+            width: 4px; height: 20px;
+            position: absolute; top: -18px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, #000 0%, #444 100%);
+            border-radius: 3px 3px 0 0;
+            z-index: 11;
+        }
+
+        /* MAGIC FLAME */
+        .flame-anchor {
+            position: absolute;
+            top: -75px; left: 50%;
+            transform: translateX(-50%);
+            filter: blur(0.5px);
+            animation: realisticSway 4s infinite ease-in-out, ignition 1.5s 1.5s both;
+        }
+
+        @keyframes ignition {
+            0% { transform: translateX(-50%) scale(0); opacity: 0; }
+            50% { transform: translateX(-50%) scale(1.4); opacity: 0.8; filter: brightness(2); }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+        .flame-outer {
+            width: 28px; height: 55px;
+            background: linear-gradient(to bottom, #fff 10%, #ffda00 40%, #ff8c00 80%, rgba(255, 69, 0, 0.15) 100%);
+            border-radius: 50% 50% 35% 35%;
+            filter: drop-shadow(0 0 20px #ffda00) drop-shadow(0 0 50px #ff8c00);
+            position: relative;
+        }
+
+        .flame-core-blue {
+            position: absolute; bottom: 8px; left: 50%;
+            transform: translateX(-50%);
+            width: 10px; height: 18px;
+            background: #2a6df2; 
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(2px);
+        }
+
+        /* Breath-like Bloom */
+        .glow-halo {
+            position: absolute; top: -80px;
+            width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(255, 218, 0, 0.16) 0%, rgba(255, 218, 0, 0) 75%);
+            pointer-events: none;
+            mix-blend-mode: color-dodge;
+            animation: glowPulse 4s infinite alternate;
+        }
+
+        @keyframes realisticSway {
+            0%, 100% { transform: translateX(-50%) rotate(-1deg) scaleY(1); }
+            50% { transform: translateX(-53%) rotate(1deg) scaleY(1.06); }
+        }
+
+        @keyframes glowPulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.08); }
+        }
+
+        /* Prompt inside a Glass Pill */
+        .hint-wrap {
+            margin-top: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 30px;
+            border-radius: 100px;
+            transition: all 0.5s;
+            animation: hintFade 2s 2s both;
+        }
+        @keyframes hintFade { from { opacity: 0; } to { opacity: 1; } }
+
+        .hint-text {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+        }
+
+        /* --- THE REVEAL CARD (SUPER DECORATED) --- */
+        #reveal-container {
+            position: fixed; inset: 0;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 30px;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            z-index: 1000;
+        }
+
+        .luxury-card {
+            background: rgba(15, 15, 15, 0.4);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: clamp(45px, 12vw, 80px) 30px 60px;
+            border-radius: 45px;
+            max-width: 450px; width: 95%;
+            text-align: center;
+            box-shadow: 0 70px 140px rgba(0,0,0,0.95);
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .photo-ring {
+            width: clamp(180px, 55vw, 250px); height: clamp(180px, 55vw, 250px);
+            border-radius: 50%;
+            object-fit: cover;
+            border: 10px solid white;
+            box-shadow: 0 0 60px rgba(255,255,255,0.3);
+            margin: -140px auto 40px;
+            transform: scale(0.5) rotate(-5deg);
+            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .bday-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 10vw, 4rem);
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, #fff 0%, #ffda00 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 0.9;
+        }
+
+        .wish-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.5rem, 6vw, 2.2rem);
+            color: rgba(255,255,255,0.9);
+            max-width: 360px; margin: 0 auto;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .replay-action {
+            margin-top: 60px;
+            color: rgba(255,255,255,0.35);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .smoke-trail {
+            position: absolute;
+            width: 15px; height: 15px;
+            background: white;
+            border-radius: 50%;
+            filter: blur(15px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-layer" id="bg-mood"></div>
+
+    <div class="decoration-wrap" id="mote-layer"></div>
+
+    <div class="ceremony-wrap" id="candle-scene" onclick="igniteWish()">
+        <div class="glow-halo" id="halo-light"></div>
+        <div class="standing-surface" id="floor-reflect"></div>
+        <div class="luxury-candle">
+            <div class="gold-ribbon"></div>
+            <div class="wick-root"></div>
+            <div class="flame-anchor" id="flame-group">
+                <div class="flame-outer">
+                    <div class="flame-core-blue"></div>
+                </div>
+            </div>
+        </div>
+        <div class="hint-wrap" id="hint-pill">
+            <div class="hint-text">Tap the flame</div>
+        </div>
+    </div>
+
+    <div id="reveal-container">
+        <div class="luxury-card">
+            <img src="argument2" class="photo-ring" id="final-photo">
+            <h1 class="bday-title">Happy Birthday Dhidhisee💗, https://i.pinimg.com/736x/d1/d7/2d/d1d72d854b2f8c33da8fb2337fd7aef2.jpg, Ee kollam, namk karangan povan ullathaanu tta, Marakkandaa! 🎂✨!</h1>
+            <p class="wish-message">argument3</p>
+            <div class="replay-action" onclick="location.reload()">Replay Magic Ceremony</div>
+        </div>
+    </div>
+
+    <script>
+        // High-Quality Assets
+        const blowSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_510a726330.mp3'); 
+        const celebrateSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_3d1a6c4b92.mp3');
+
+        // Create Golden Motes
+        const moteLayer = document.getElementById('mote-layer');
+        for (let i = 0; i < 25; i++) {
+            const mote = document.createElement('div');
+            mote.className = 'mote';
+            const size = Math.random() * 5 + 3;
+            mote.style.width = size + 'px';
+            mote.style.height = size + 'px';
+            mote.style.left = Math.random() * 100 + '%';
+            mote.style.top = Math.random() * 100 + '%';
+            moteLayer.appendChild(mote);
+            mote.animate([
+                { transform: 'translate(0, 0)', opacity: 0.1 },
+                { transform: `translate(${(Math.random()-0.5)*150}px, ${(Math.random()-0.5)*150}px)`, opacity: 0.4 },
+                { transform: 'translate(0, 0)', opacity: 0.1 }
+            ], { duration: 15000 + Math.random() * 8000, iterations: Infinity });
+        }
+
+        function igniteWish() {
+            blowSound.play().catch(e => console.log('Audio wait: ' + e));
+
+            // Kill Light
+            document.getElementById('flame-group').style.display = 'none';
+            document.getElementById('halo-light').style.display = 'none';
+            document.getElementById('floor-reflect').style.display = 'none';
+            document.getElementById('hint-pill').style.opacity = '0';
+            document.getElementById('bg-mood').style.opacity = '0';
+            document.body.style.background = '#000';
+
+            // Deluxe Smoke Physics
+            for(let i=0; i<25; i++) {
+                setTimeout(() => {
+                    const smoke = document.createElement('div');
+                    smoke.className = 'smoke-trail';
+                    smoke.style.left = (window.innerWidth / 2 - 5 + (Math.random() * 15)) + 'px';
+                    smoke.style.top = (window.innerHeight / 2 - 100) + 'px';
+                    document.body.appendChild(smoke);
+
+                    smoke.animate([
+                        { transform: `scale(1) translate(0, 0)`, opacity: 0.8, filter: 'blur(10px)' },
+                        { transform: `scale(12) translate(${(Math.random()-0.5)*200}px, -300px) rotate(${Math.random()*270}deg)`, opacity: 0, filter: 'blur(25px)' }
+                    ], {
+                        duration: 2500 + Math.random()*1500,
+                        easing: 'ease-out'
+                    }).onfinish = () => smoke.remove();
+                }, i * 50);
+            }
+
+            setTimeout(() => {
+                celebrateSound.play().catch(e => console.log('Audio wait: ' + e));
+
+                // Celebration Physics
+                const duration = 4 * 1000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({ particleCount: 3, angle: 60, spread: 65, origin: { x: 0, y: 0.8 }, colors: ['#ffda00', '#fff', '#ff6b81'] });
+                    confetti({ particleCount: 3, angle: 120, spread: 65, origin: { x: 1, y: 0.8 }, colors: ['#ffda00', '#fff', '#ff6b81'] });
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                }());
+
+                document.getElementById('candle-scene').style.display = 'none';
+                const reveal = document.getElementById('reveal-container');
+                reveal.style.display = 'flex';
+                
+                setTimeout(() => {
+                    reveal.style.opacity = '1';
+                    const photo = document.getElementById('final-photo');
+                    photo.style.transform = 'scale(1) rotate(0deg)';
+                    document.getElementById('bg-mood').style.opacity = '1';
+                    document.getElementById('bg-mood').style.filter = 'blur(20px) brightness(0.2)';
+                }, 200);
+
+            }, 2200);
+        }
+    </script>
+</body>
+</html>
