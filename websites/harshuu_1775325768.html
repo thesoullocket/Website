@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Artist: Harshuu....🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #121212;
+            --spotify-light-grey: #b3b3b3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #000;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- THE ULTIMATE ARTIST INTERFACE --- */
+        .container {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background: var(--spotify-black);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        .container::-webkit-scrollbar { display: none; }
+
+        /* Immersive Artist Header */
+        .artist-header {
+            width: 100%;
+            height: 45dvh;
+            min-height: 300px;
+            position: relative;
+            background: url('https://i.postimg.cc/50MzZW7X/girisha.jpg'); /* 2nd argument: Photo */
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .header-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(0,0,0,0) 0%, rgba(18,18,18,0.7) 60%, rgba(18,18,18,1) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 25px;
+        }
+
+        .badge-verified {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #4CB3FF;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .name-hero {
+            font-size: clamp(2.5rem, 12vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -3px;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .listener-count {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        /* Main Body Content */
+        .body-content {
+            padding: 0 0 100px;
+            flex: 1;
+        }
+
+        .action-row {
+            padding: 15px 25px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: -30px; 
+            z-index: 20;
+            position: relative;
+        }
+
+        .play-main {
+            width: 56px; height: 56px;
+            background: var(--spotify-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .play-main svg { width: 28px; height: 28px; fill: black; margin-left: 2px; }
+
+        .btn-follow-modern {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 6px 15px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        /* Tracklist Styling */
+        .section-label { font-size: 1.2rem; font-weight: 800; padding: 0 25px; margin-bottom: 20px; }
+
+        .track-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 25px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        .track-card:active { background: rgba(255,255,255,0.1); }
+        .num { color: var(--spotify-light-grey); font-weight: 600; width: 15px; font-size: 0.9rem; }
+        .thumb { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; }
+        .info { flex: 1; }
+        .name { font-size: 0.95rem; font-weight: 600; margin-bottom: 2px; }
+        .sub { font-size: 0.75rem; color: var(--spotify-light-grey); font-weight: 500; }
+
+        /* Floating Nav Player (Premium) */
+        .island-player {
+            position: fixed;
+            bottom: 15px; left: 10px; right: 10px;
+            background: #282828;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border-bottom: 2px solid var(--spotify-green);
+        }
+        .island-thumb { width: 38px; height: 38px; border-radius: 4px; object-fit: cover; }
+        .island-text p { font-size: 0.75rem; font-weight: 800; }
+        .island-text span { font-size: 0.65rem; color: var(--spotify-light-grey); }
+
+        /* --- WRAPPED EXPERIENCE (FIXED) --- */
+        #story-container {
+            position: fixed; inset: 0; z-index: 2000;
+            background: #121212; display: none; flex-direction: column;
+            overflow: hidden; opacity: 0; transition: opacity 0.8s ease;
+            height: 100dvh;
+        }
+        .p-bar-container { position: absolute; top: 15px; left: 10px; right: 10px; display: flex; gap: 5px; z-index: 3000; }
+        .p-bar { height: 2px; background: rgba(255,255,255,0.2); flex: 1; border-radius: 1px; overflow: hidden; }
+        .p-fill { height: 100%; width: 0%; background: white; transition: width linear; }
+
+        .slide-story { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; opacity: 0; transition: opacity 0.4s ease; text-align: center; }
+        .slide-story.active { opacity: 1; }
+
+        .square-img-w { 
+            width: clamp(180px, 50vw, 240px); 
+            aspect-ratio: 1/1;
+            object-fit: cover; 
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6); 
+            margin: 25px 0;
+            flex-shrink: 0; 
+        }
+
+        .title-w { font-size: clamp(2.5rem, 10vw, 3.5rem); font-weight: 900; line-height: 0.9; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -2px; }
+        .stat-w { font-size: clamp(3rem, 15vw, 5rem); font-weight: 900; margin: 10px 0; letter-spacing: -3px; }
+        .sub-w { font-size: 1.1rem; font-weight: 700; opacity: 0.8; }
+
+        .bg-1 { background: #ff0055; }
+        .bg-2 { background: #ff7700; }
+        .bg-3 { background: #0077ff; }
+        .bg-4 { background: #1DB954; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Professional Artist Interface -->
+    <div class="container" id="main-view">
+        <div class="artist-header">
+            <div class="header-overlay">
+                <div class="badge-verified">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM10 17l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z"/></svg>
+                    Verified Artist
+                </div>
+                <h1 class="name-hero">Harshuu....🤍</h1> <!-- 1st: Name -->
+                <p class="listener-count">Infinity monthly listeners</p> <!-- 3rd: Listeners -->
+            </div>
+        </div>
+
+        <div class="body-content">
+            <div class="action-row">
+                <button class="play-main" onclick="startWrapped()"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+                <button class="btn-follow-modern">Following</button>
+                <div style="color: var(--spotify-light-grey); font-size: 1.4rem; font-weight: 900;">⋮</div>
+            </div>
+
+            <h2 class="section-label">Popular</h2>
+            
+            <div class="track-card" onclick="startWrapped()">
+                <span class="num">1</span>
+                <img src="https://i.postimg.cc/50MzZW7X/girisha.jpg" class="thumb"> <!-- 2nd: Photo -->
+                <div class="info">
+                    <p class="name">21>16 September 2025</p> <!-- 6th: Shared Memory -->
+                    <p class="sub">Infinity plays</p> <!-- 5th: Total Minutes -->
+                </div>
+            </div>
+
+            <div class="track-card">
+                <span class="num">2</span>
+                <div style="width: 48px; height: 48px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem;">∞</div>
+                <div class="info">
+                    <p class="name">Relationship Since <https://i.postimg.cc/50MzZW7X/girisha.jpg</p> <!-- 4th: Since -->
+                    <p class="sub">1,000,000+ plays</p>
+                </div>
+            </div>
+
+            <div class="track-card">
+                <span class="num">3</span>
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400" class="thumb">
+                <div class="info">
+                    <p class="name">Our Morning Coffee</p>
+                    <p class="sub">84,321 plays</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Island Player -->
+        <div class="island-player" onclick="startWrapped()">
+            <img src="https://i.postimg.cc/50MzZW7X/girisha.jpg" class="island-thumb"> 
+            <div class="island-text">
+                <p>21>16 September 2025 (2024 wrapped)</p>
+                <span>Harshuu....🤍</span>
+            </div>
+            <div style="margin-left: auto; color: var(--spotify-green); display: flex; gap: 15px; align-items: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="transform: scale(1.1);"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wrapped Experience -->
+    <div id="story-container">
+        <div class="p-bar-container" id="p-progress"></div>
+        <div class="slide-story bg-1">
+            <p class="sub-w">Total time spent together...</p>
+            <div class="stat-w">Infinity</div> <!-- 5th: Minutes -->
+            <p class="sub-w">Minutes of pure happiness.</p>
+        </div>
+        <div class="slide-story bg-2">
+            <p class="sub-w">#1 MOST PLAYED MEMORY</p>
+            <h1 class="title-w">21>16 September 2025</h1> <!-- 6th: Shared Memory -->
+            <img src="https://i.postimg.cc/50MzZW7X/girisha.jpg" class="square-img-w"> <!-- 2nd: Photo -->
+            <p class="sub-w">On repeat since day one.</p>
+        </div>
+        <div class="slide-story bg-3">
+            <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 24px;">
+                <p class="sub-w" style="color: yellow">Storytelling Personality</p>
+                <h1 class="title-w">The Constant</h1>
+                <p class="sub-w">Your biggest fan, your #1 listener, and my lifetime support.</p>
+            </div>
+        </div>
+        <div class="slide-story bg-4">
+            <h1 class="title-w">It's Official.</h1>
+            <p class="sub-w">Harshuu....🤍,</p>
+            <p class="sub-w" style="margin: 20px 0">288,000</p> <!-- 7th: Msg -->
+            <div class="stat-w" style="font-size: 2rem">Verified Presence. 💚</div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide-story');
+        const progressContainer = document.getElementById('p-progress');
+        const slideDuration = 3000;
+        let storyInterval;
+
+        slides.forEach(() => {
+            const bar = document.createElement('div');
+            bar.className = 'p-bar';
+            bar.innerHTML = '<div class="p-fill"></div>';
+            progressContainer.appendChild(bar);
+        });
+
+        function startWrapped() {
+            const mainView = document.getElementById('main-view');
+            const storyView = document.getElementById('story-container');
+            mainView.style.opacity = '0';
+            mainView.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                mainView.style.display = 'none';
+                storyView.style.display = 'flex';
+                setTimeout(() => { 
+                   storyView.style.opacity = '1';
+                   showSlide(0);
+                }, 50);
+            }, 600);
+
+            // Add Tap Navigation
+            storyView.addEventListener('click', (e) => {
+                const width = window.innerWidth;
+                const x = e.clientX;
+                if (x < width / 2) {
+                    // Tap Left: Prev
+                    if (currentSlide > 0) showSlide(currentSlide - 1);
+                } else {
+                    // Tap Right: Next
+                    showSlide(currentSlide + 1);
+                }
+            });
+        }
+
+        function showSlide(index) {
+            if (index >= slides.length) return endStory();
+            if (index < 0) index = 0;
+            
+            currentSlide = index;
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+
+            const fills = document.querySelectorAll('.p-fill');
+            
+            // Reset all bars correctly
+            fills.forEach((f, i) => {
+                f.style.transition = 'none';
+                if (i < index) {
+                    f.style.width = '100%';
+                } else {
+                    f.style.width = '0%';
+                }
+            });
+
+            // Trigger current bar animation
+            setTimeout(() => {
+                const currentBarFill = fills[index];
+                if (currentBarFill) {
+                    currentBarFill.style.transition = `width ${slideDuration}ms linear`;
+                    currentBarFill.style.width = '100%';
+                }
+            }, 50);
+
+            clearTimeout(storyInterval);
+            storyInterval = setTimeout(() => showSlide(index + 1), slideDuration);
+        }
+
+        function endStory() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#1DB954', '#ffffff'] });
+        }
+    </script>
+</body>
+</html>
