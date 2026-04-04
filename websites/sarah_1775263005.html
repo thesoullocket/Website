@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Wish - Sarah</title>
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --accent: #ffda00;
+            --soft-red: #ff6b81;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin:0; padding:0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: #020202;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- CINEMATIC AMBIENCE --- */
+        .ambient-layer {
+            position: fixed; inset: 0;
+            background: url('https://images.unsplash.com/photo-1513151233558-d860c5398176?w=1200&q=80'); 
+            background-size: cover;
+            background-position: center;
+            filter: blur(50px) brightness(0.1);
+            opacity: 0;
+            z-index: 1;
+            animation: fadeIn 2s forwards;
+        }
+
+        /* Light Motes (Dust Particles) */
+        .mote {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.2;
+            filter: blur(2px);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes fadeIn { to { opacity: 0.8; } }
+
+        /* --- THE MASTER CANDLE SCENE --- */
+        .ceremony-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 1.5s 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+        }
+
+        @keyframes slideUp { 
+            to { opacity: 1; transform: translateY(0) scale(clamp(0.8, 20vw, 1)); }
+        }
+
+        /* Realistic surface reflection */
+        .table-surface {
+            position: absolute;
+            bottom: -30px;
+            width: 400px; height: 100px;
+            background: radial-gradient(ellipse at center, rgba(255, 218, 0, 0.07) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(15px);
+            z-index: 5;
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        /* High-Fidelity Wax Candle */
+        .candle-wax {
+            width: 58px; height: 195px;
+            background: linear-gradient(90deg, #993b48 0%, #e37e90 45%, #ffabb7 50%, #e37e90 55%, #993b48 100%);
+            border-radius: 10px 10px 4px 4px;
+            position: relative;
+            box-shadow: 
+                inset 10px 0 30px rgba(0,0,0,0.1),
+                inset -10px 0 30px rgba(0,0,0,0.1),
+                0 20px 70px rgba(0,0,0,0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .ceremony-container:hover .candle-wax { transform: scale(1.02); }
+
+        .wick-burnt {
+            width: 4px; height: 22px;
+            position: absolute; top: -20px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, #000 0%, #333 100%);
+            border-radius: 4px 4px 0 0;
+            z-index: 11;
+        }
+
+        /* Layered Hyper-Realistic Flame */
+        .flame-root {
+            position: absolute;
+            top: -75px; left: 50%;
+            transform: translateX(-50%);
+            filter: blur(0.5px);
+            animation: realistic-sway 4s infinite ease-in-out;
+        }
+
+        .flame-body {
+            width: 26px; height: 55px;
+            background: linear-gradient(to bottom, #fff 10%, #ffda00 40%, #ff8c00 80%, rgba(255, 69, 0, 0.1) 100%);
+            border-radius: 50% 50% 35% 35%;
+            filter: drop-shadow(0 0 20px #ffda00) drop-shadow(0 0 50px #ff8c00);
+            position: relative;
+        }
+
+        .flame-blue {
+            position: absolute; bottom: 8px; left: 50%;
+            transform: translateX(-50%);
+            width: 10px; height: 18px;
+            background: #2a6df2; 
+            border-radius: 50%;
+            opacity: 0.5;
+            filter: blur(2px);
+        }
+
+        /* Dynamic light cast */
+        .main-halo {
+            position: absolute; top: -80px;
+            width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(255, 218, 0, 0.14) 0%, rgba(255, 218, 0, 0) 75%);
+            pointer-events: none;
+            mix-blend-mode: color-dodge;
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        @keyframes realistic-sway {
+            0%, 100% { transform: translateX(-50%) rotate(-1deg) scaleY(1); }
+            50% { transform: translateX(-55%) rotate(1.5deg) scaleY(1.08); }
+        }
+
+        @keyframes pulse-glow {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .instruction-modern {
+            margin-top: 90px;
+            font-size: 0.8rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 300;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+        }
+
+        /* --- THE REVEAL INTERFACE --- */
+        #reveal-ui {
+            position: fixed; inset: 0;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 25px;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            z-index: 1000;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: clamp(40px, 10vw, 70px) 30px 50px;
+            border-radius: 40px;
+            max-width: 440px; width: 95%;
+            text-align: center;
+            box-shadow: 0 60px 120px rgba(0,0,0,0.9);
+            margin-top: 60px;
+        }
+
+        .b-photo {
+            width: clamp(170px, 50vw, 240px); height: clamp(170px, 50vw, 240px);
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid white;
+            box-shadow: 0 0 50px rgba(255,255,255,0.25);
+            margin: -130px auto 35px;
+            transform: scale(0.5);
+            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .h-message {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 9vw, 3.8rem);
+            margin-bottom: 12px;
+            background: linear-gradient(to bottom, #ffffff 0%, #ffda00 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .p-note {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.4rem, 5vw, 1.8rem);
+            color: rgba(255,255,255,0.85);
+            max-width: 340px; margin: 0 auto;
+        }
+
+        .replay-btn {
+            margin-top: 50px;
+            background: transparent;
+            color: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 30px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .smoke-fragment {
+            position: absolute;
+            width: 15px; height: 15px;
+            background: white;
+            border-radius: 50%;
+            filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-layer" id="bg"></div>
+
+    <div class="ceremony-container" id="launch-ui" onclick="extinguishMagic()">
+        <div class="main-halo" id="halo"></div>
+        <div class="table-surface" id="table"></div>
+        <div class="candle-wax">
+            <div class="wick-burnt"></div>
+            <div class="flame-root" id="flame-root">
+                <div class="flame-body">
+                    <div class="flame-blue"></div>
+                </div>
+            </div>
+        </div>
+        <p class="instruction-modern" id="hint">Tap the flame to wish</p>
+    </div>
+
+    <div id="reveal-ui">
+        <div class="glass-card">
+            <img src="https://i.pinimg.com/736x/d1/d7/2d/d1d72d854b2f8c33da8fb2337fd7aef2.jpg" class="b-photo" id="final-img">
+            <h1 class="h-message">Happy Birthday Sarah!</h1>
+            <p class="p-note">May your year ahead be as magical as this wish! 🎂✨</p>
+            <button class="replay-btn" onclick="location.reload()">Replay Magic</button>
+        </div>
+    </div>
+
+    <script>
+        // Immersive Audio
+        const blowSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_510a726330.mp3'); 
+        const celebrateSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_3d1a6c4b92.mp3');
+
+        // Create Ambient Dust Motes
+        for (let i = 0; i < 20; i++) {
+            const mote = document.createElement('div');
+            mote.className = 'mote';
+            const size = Math.random() * 4 + 2;
+            mote.style.width = size + 'px';
+            mote.style.height = size + 'px';
+            mote.style.left = Math.random() * 100 + '%';
+            mote.style.top = Math.random() * 100 + '%';
+            document.body.appendChild(mote);
+            mote.animate([
+                { transform: 'translate(0, 0)', opacity: 0.2 },
+                { transform: `translate(${(Math.random()-0.5)*100}px, ${(Math.random()-0.5)*100}px)`, opacity: 0.4 },
+                { transform: 'translate(0, 0)', opacity: 0.2 }
+            ], { duration: 10000 + Math.random() * 5000, iterations: Infinity });
+        }
+
+        function extinguishMagic() {
+            blowSound.play().catch(e => console.log('Audio wait: ' + e));
+
+            document.getElementById('flame-root').style.display = 'none';
+            document.getElementById('halo').style.display = 'none';
+            document.getElementById('table').style.display = 'none';
+            document.getElementById('hint').style.opacity = '0';
+            document.getElementById('bg').style.opacity = '0';
+            document.body.style.background = '#000';
+
+            // High-Performance Smoke Particles
+            for(let i=0; i<20; i++) {
+                setTimeout(() => {
+                    const fragment = document.createElement('div');
+                    fragment.className = 'smoke-fragment';
+                    fragment.style.left = (window.innerWidth / 2 - 5 + (Math.random() * 15)) + 'px';
+                    fragment.style.top = (window.innerHeight / 2 - 100) + 'px';
+                    document.body.appendChild(fragment);
+
+                    fragment.animate([
+                        { transform: `scale(1) translate(0, 0)`, opacity: 0.7, filter: 'blur(8px)' },
+                        { transform: `scale(10) translate(${(Math.random()-0.5)*150}px, -250px) rotate(${Math.random()*180}deg)`, opacity: 0, filter: 'blur(20px)' }
+                    ], {
+                        duration: 2000 + Math.random()*1000,
+                        easing: 'ease-out'
+                    }).onfinish = () => fragment.remove();
+                }, i * 60);
+            }
+
+            setTimeout(() => {
+                celebrateSound.play().catch(e => console.log('Audio wait: ' + e));
+
+                const duration = 4 * 1000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({ particleCount: 3, angle: 60, spread: 60, origin: { x: 0 }, colors: ['#ffda00', '#fff', '#ff6b81'] });
+                    confetti({ particleCount: 3, angle: 120, spread: 60, origin: { x: 1 }, colors: ['#ffda00', '#fff', '#ff6b81'] });
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                }());
+
+                document.getElementById('launch-ui').style.display = 'none';
+                const reveal = document.getElementById('reveal-ui');
+                reveal.style.display = 'flex';
+                
+                setTimeout(() => {
+                    reveal.style.opacity = '1';
+                    document.getElementById('final-img').style.transform = 'scale(1)';
+                    document.getElementById('bg').style.opacity = '1';
+                    document.getElementById('bg').style.filter = 'blur(15px) brightness(0.2)';
+                }, 150);
+
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
