@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>❤️ Red Heart Idaaloo.. ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Poppins, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #5b1022, #17060d 45%, #050505)
+        }
+
+        .glow {
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: #ff3d6e;
+            filter: blur(170px);
+            opacity: .18;
+            animation: g 12s ease-in-out infinite
+        }
+
+        .glow:nth-child(2) {
+            background: #ff9dbc;
+            animation-delay: -6s
+        }
+
+        @keyframes g {
+            50% {
+                transform: translate(220px, 120px) scale(1.2)
+            }
+        }
+
+        .card {
+            position: relative;
+            z-index: 2;
+            width: min(720px, 90vw);
+            padding: 70px 55px;
+            border-radius: 32px;
+            background: rgba(255, 255, 255, .08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .12);
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .45)
+        }
+
+        .top {
+            font-size: 28px;
+            letter-spacing: 16px;
+            margin-bottom: 16px
+        }
+
+        .big {
+            font-size: 90px;
+            animation: b 1.6s infinite;
+            filter: drop-shadow(0 0 18px crimson)
+        }
+
+        @keyframes b {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            30% {
+                transform: scale(1.12)
+            }
+
+            50% {
+                transform: scale(.95)
+            }
+        }
+
+        h1 {
+            font-size: 58px;
+            background: linear-gradient(90deg, #ff5d91, #ffd0df, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        p {
+            color: #f5dce5;
+            margin-top: 18px
+        }
+
+        .bgHeart {
+            position: fixed;
+            top: -60px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: .18;
+            animation: fall linear forwards;
+            filter: drop-shadow(0 0 8px #ff4b78)
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) translateX(0) rotate(0) scale(.5);
+                opacity: 0
+            }
+
+            10% {
+                opacity: .22
+            }
+
+            100% {
+                transform: translateY(120vh) translateX(calc(var(--drift)*1px)) rotate(360deg) scale(1.2);
+                opacity: 0
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow"></div>
+    <div class="glow"></div>
+    <div class="card">
+        <div class="top">❤️ ❤️ ❤️</div>
+        <div class="big">❤️</div>
+        <h1>Red Heart Idaaloo..</h1>
+        <p>Love Yaa Chakkiepoocheee</p>
+    </div>
+    <script>
+        const card = document.querySelector('.card');
+        function createHeart() {
+            const r = card.getBoundingClientRect();
+            const h = document.createElement('div');
+            h.className = 'bgHeart';
+            h.textContent = '❤️';
+            h.style.left = (r.left + Math.random() * r.width) + 'px';
+            h.style.fontSize = (18 + Math.random() * 24) + 'px';
+            h.style.setProperty('--drift', (Math.random() - .5) * 160);
+            h.style.animationDuration = (6 + Math.random() * 5) + 's';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 12000);
+        }
+        for (let i = 0; i < 35; i++)setTimeout(createHeart, i * 180);
+        setInterval(createHeart, 220);
+    </script>
+</body>
+
+</html>
